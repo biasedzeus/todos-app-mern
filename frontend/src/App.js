@@ -4,51 +4,95 @@ import Preloader from "./Components/Preloader";
 import { readTodos, createTodo } from "./functions/index";
 
 function App() {
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState({title:'',content:''});
+  const [fetchedTodos,setFetchedTodos] =  useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await readTodos();
       console.log({result});
-      setTodos(result);
+      setFetchedTodos(result);
     };
     fetchData();
   }, []);
 
-  todos.map((todo) => {
-    console.log("todo:", todo.title);
-  });
+  // todos.map((todo) => {
+  //   console.log("todo:", todo.title);
+  // });
+
+  const handleOnSubmit = async(e) =>{
+    e.preventDefault();
+    const result = await createTodo(todos);
+    console.log(result)
+
+  }
+
+
+
 
   return (
-    <div classname="center-align">
+    <div className="container center-align">
       <div className="row">
-        <form className="col s12">
+        <pre style={{color:"white"}}>{JSON.stringify(todos)}</pre>
+        <form className="col s12" onSubmit={handleOnSubmit}>
           <div className="row">
             <div className="input-field col s4">
               <i className="material-icons prefix">title</i>
-              <input id="icon_prefix" type="text" className="validate" />
+              <input id="icon_prefix"
+               type="text" 
+               className="validate"
+               value={todos.title}
+              onChange={(e) =>setTodos({...todos,title:e.target.value})}
+               
+               />
               <label htmlFor="icon_prefix">title</label>
             </div>
-            <div className="input-field col s5">
+            <div className="input-field col s4">
               <i className="material-icons prefix">description</i>
-              <input id="description" type="tel" className="validate" />
+              <input id="description" 
+              type="tel" 
+              className="validate" 
+              onChange={(e) =>setTodos({...todos,content:e.target.value})}         
+              
+              />
               <label htmlFor="description">content</label>
             </div>
-            <div class="input-field col s1">
-              <a className=" btn">
-                <i className="material-icons center">delete</i>
-              </a>
+            <div className="input-field col s1">
+              
             </div>
           </div>
+          <div className="row center-align">
+            <button className="btn waves-effect waves-light">Add Todos</button>
+            </div>
         </form>
-        <Preloader />
-        <div className="collection center-align ">
-          {todos.map((todo) => {
-           return <a href="#!" class="collection-item">
-               {todo.title}
-            </a>;
+        {
+          !fetchedTodos ? <Preloader/> : fetchedTodos.length >0 
+          ?   <div style={{color:"white"}} className="container collection center-align text-white">
+          {fetchedTodos.map((todo) => {
+           return (
+             <li key={todo._id} className="collection-items">
+               <div>
+                 <h5>{todo.title}</h5>
+               <p>{todo.content}
+               
+               <a href="#!" className="secondary-content">
+                 <i className="delete align-right material-icons">delete</i>
+                 
+                
+               </a>
+               </p>
+               <hr/>
+               </div>
+
+              
+             </li>
+           );
           })}
+        </div>     : <div>
+          <h5>Nothing To Do</h5>
         </div>
+        }
+       
       </div>
     </div>
   );
