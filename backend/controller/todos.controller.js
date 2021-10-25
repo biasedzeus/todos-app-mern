@@ -21,5 +21,20 @@ const Todo = require('../models/todos.model')
         res.status(409).json({error:error.message})
     }
 }
+const updateTodo = async (req,res) =>{
+    const {id} = req.params;
+    const {title,content} = req.body;
+    if(!mongoose.isValidObjectId(id)){
+        return res.status(404).send(`The Id ${id} is not valid`);
 
-module.exports = {readTodos,createTodo};
+    }
+
+    const todo = {title,content,_id};
+    await Todo.findByIdAndUpdate(id,todo,{new:true})
+    res.json(todo);
+
+
+} 
+
+
+module.exports = {readTodos,createTodo,updateTodo};
