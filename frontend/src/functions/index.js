@@ -18,3 +18,14 @@ export const createTodo = async (todo) =>{
         console.log(error)
     }
 }
+
+export const updateTodo = async (id,todo) =>{
+    try {
+     const {data} = await api.updateTodo(todo);
+        return data;
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
