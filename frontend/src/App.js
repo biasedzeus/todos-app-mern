@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Preloader from "./Components/Preloader";
-import { readTodos, createTodo, updateTodo } from "./functions/index";
+import { readTodos, createTodo, updateTodo,deleteTodo } from "./functions/index";
 
 function App() {
   const [todos, setTodos] = useState({ title: "", content: "" });
@@ -58,6 +58,15 @@ function App() {
     window.addEventListener("keydown", clearField);
     return () => window.removeEventListener("keydown", clearField);
   }, []);
+
+ const removeTodo = async(id) =>{
+   if(fetchedTodos === undefined) {return}
+   await deleteTodo(id);
+   const todosCopy = [...fetchedTodos];
+   todosCopy.filter(todo => todo._id !== id);
+  //  setFetchedTodos(todosCopy);
+ }
+
 
   return (
     <div className="container center-align">
@@ -117,8 +126,13 @@ function App() {
                     <p>
                       {todo.content}
 
-                      <a href="#!" className="secondary-content">
-                        <i className="delete align-right material-icons">
+                      <a 
+                      href="#!" 
+                      className="secondary-content"
+                      
+                      >
+                        <i onClick={() => removeTodo(todo._id)} 
+                        className="delete align-right material-icons">
                           delete
                         </i>
                       </a>
