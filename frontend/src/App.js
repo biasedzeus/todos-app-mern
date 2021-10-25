@@ -6,6 +6,13 @@ import { readTodos, createTodo } from "./functions/index";
 function App() {
   const [todos, setTodos] = useState({title:'',content:''});
   const [fetchedTodos,setFetchedTodos] =  useState([]);
+  const [currentId, setCurrentId] = useState(0);
+
+
+  useEffect(() => {
+    let currentTodo = currentId !==0 ? fetchedTodos.find(todo => todo._id === currentId):{title:'',content:''}
+    setTodos(currentTodo)
+  }, [currentId,fetchedTodos])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,6 +34,23 @@ function App() {
 
   }
 
+  const clearInput = () =>{
+    setCurrentId(0);
+    setTodos({title:'',content:''})
+    console.log("esc pressed")
+  }
+
+  useEffect(() => {
+    const clearField = (e) => {
+      if(e.keyCode === 27){
+        console.log("key pressed in useEffect")
+        clearInput();
+      }
+    }
+    window.addEventListener('keydown',clearField)
+    return ()=> window.removeEventListener('keydown',clearField)
+  }, [])
+
 
 
 
@@ -34,6 +58,7 @@ function App() {
     <div className="container center-align">
       <div className="row">
         <pre style={{color:"white"}}>{JSON.stringify(todos)}</pre>
+        <pre style={{color:"white"}}>{JSON.stringify(currentId)}</pre>
         <form className="col s12" onSubmit={handleOnSubmit}>
           <div className="row">
             <div className="input-field col s4">
@@ -51,6 +76,7 @@ function App() {
               <i className="material-icons prefix">description</i>
               <input id="description" 
               type="tel" 
+              value={todos.content}
               className="validate" 
               onChange={(e) =>setTodos({...todos,content:e.target.value})}         
               
@@ -70,7 +96,9 @@ function App() {
           ?   <div style={{color:"white"}} className="container collection center-align text-white">
           {fetchedTodos.map((todo) => {
            return (
-             <li key={todo._id} className="collection-items">
+             <li 
+             onClick={() =>{setCurrentId(todo._id)}}
+             key={todo._id} className="collection-items">
                <div>
                  <h5>{todo.title}</h5>
                <p>{todo.content}
