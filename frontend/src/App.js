@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Preloader from "./Components/Preloader";
-
-import { readTodos, createTodo } from "./functions/index";
+import { readTodos, createTodo, updateTodo } from "./functions/index";
 
 function App() {
   const [todos, setTodos] = useState({ title: "", content: "" });
@@ -23,7 +22,7 @@ function App() {
       setFetchedTodos(result);
     };
     fetchData();
-  }, []);
+  }, [currentId]);
 
   // todos.map((todo) => {
   //   console.log("todo:", todo.title);
@@ -31,9 +30,16 @@ function App() {
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
-    const result = await createTodo(todos);
-    console.log(result);
-    setFetchedTodos([...fetchedTodos,result])
+    if(currentId === 0){
+      const result = await createTodo(todos);
+      setFetchedTodos([...fetchedTodos,result]);
+      clearInput();
+      console.log(result);}
+      else{
+        await updateTodo(currentId,todos);
+        clearInput();
+      }
+
   };
 
   const clearInput = () => {
