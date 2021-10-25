@@ -29,3 +29,13 @@ export const updateTodo = async (id,todo) =>{
     }
 }
 
+export const deleteTodo = async (id) =>{
+    try {
+     const {data} = await api.deleteTodo(id);
+        return data;
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
